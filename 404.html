@@ -1,14 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/css/styles.css" />
-        <title>Document</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <title>Home | Anton Van Assche</title>
     </head>
-    <nav></nav>
-    <body></body>
-    <footer></footer>
+    <header>
+        <div id="menu">
+            <button id="menu-bar" onclick="menuOnClick()">
+                <div id="bar1" class="bar"></div>
+                <div id="bar2" class="bar"></div>
+                <div id="bar3" class="bar"></div>
+            </button>
+            <nav class="nav" id="nav">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    <li>
+                        <a href="/contact/">Contact</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="menu-bg" id="menu-bg"></div>
+    </header>
+    <body>
+        <section id="404">
+            <div class="content left">
+                <h1>Page not found.</h1>
+                <h2>Here is a joke instead!</h2>
+                <p class="section-title" id="category"></p>
+                <p class="joke-content" id="setup"></p>
+                <p class="joke-content" id="delivery"></p>
+            </div>
+            <div class="content right">
+                <img src="/imgs/home.jpg" alt="me!" />
+            </div>
+        </section>
+    </body>
+    <footer>
+        <p>
+            &#169; 2023
+            <a href="https://github.com/AntonVanAssche/ant0n.tk" target="_blank"
+                >Anton Van Assche</a
+            >
+        </p>
+    </footer>
+    <script src="/js/nav.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/joke.js"></script>
 </html>
-

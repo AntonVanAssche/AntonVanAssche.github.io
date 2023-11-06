@@ -1,14 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/css/styles.css" />
-        <title>Document</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <title>About | Anton Van Assche</title>
     </head>
-    <nav></nav>
-    <body></body>
-    <footer></footer>
+    <header>
+        <div id="menu">
+            <button id="menu-bar" onclick="menuOnClick()">
+                <div id="bar1" class="bar"></div>
+                <div id="bar2" class="bar"></div>
+                <div id="bar3" class="bar"></div>
+            </button>
+            <nav class="nav" id="nav">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="/about/">About</a>
+                    </li>
+                    <li>
+                        <a href="/contact/">Contact</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="menu-bg" id="menu-bg"></div>
+    </header>
+    <body>
+        <section id="about">
+            <div class="content left">
+                <h1>About me</h1>
+                <p>
+                    Hey there! My name is
+                    <strong>Anton Van Assche</strong> and I'm currently a
+                    <strong>student</strong> at the Ghent University of Applied
+                    Sciences and Arts, where I'm studying
+                    <strong>Applied Information Technology</strong>
+                    specializing in System and Network administration.
+                </p>
+                <p style="margin-top: 1em">
+                    As a student, I'm constantly trying to improve my skills. I
+                    am a big proponent of
+                    <strong>open-source</strong> technology and use
+                    <a href="https://getfedora.org/" target="_blank"
+                        ><strong>Fedora Linux</strong></a
+                    >
+                    (<a
+                        href="https://github.com/AntonVanAssche/Dotfiles"
+                        target="_blank"
+                        >dotfiles</a
+                    >) and
+                    <a href="https://neovim.io/" target="_blank"
+                        ><strong>Neovim</strong></a
+                    >
+                    (yes, this ugly creation was made within it 😅) in my daily
+                    work. However, I also unfortunately use Windows mainly for
+                    gaming (We got to destroy those n00bs in Call of Duty right?
+                    😏) and some school-related stuff.
+                </p>
+                <p style="margin-top: 1em">
+                    In my free time, I like to work on
+                    <strong>personal projects</strong> and
+                    <strong>tinker</strong> with my <strong>homelab</strong> (if
+                    you can really call it one 😄). It consists of two Raspberry
+                    Pi's. One serves as a server hosting a bunch of stuff like
+                    <strong>Emby</strong>, <strong>Pihole</strong>,
+                    <strong>Wireguard VPN</strong>, and much more. The second
+                    one is a <strong>NAS</strong> configured in a
+                    <strong>RAID 5</strong>
+                    array using 4 SATA HDDs.
+                </p>
+                <p style="margin-top: 1em">
+                    Another hobby of mine is
+                    <a href="https://fie.org/" target="_blank"
+                        ><strong>fencing</strong></a
+                    >
+                    (<a
+                        href="https://fie.org/new-to-fencing/weapons#epee"
+                        target="_blank"
+                        >Épée</a
+                    >), which means I get to stab people for
+                    <strong>FUN</strong> 😅! I've been doing this for 10 years
+                    now (yes I'm that <strong><del>OLD</del> YOUNG</strong>) and
+                    I still love it. I am not currently competing in any
+                    tournaments, but I do train twice a week with my club. I
+                    might start competing again in some (regional) tournaments
+                    in the future, but for now I am just enjoying the sport and
+                    the people I meet through it.
+                    <strong>Sooo engarde 🤺!</strong>
+                </p>
+                <p style="margin-top: 1em">
+                    I also hold a
+                    <a
+                        href="https://www.credly.com/badges/9ee8cf32-505d-474f-8210-285248b698d0/public_url"
+                        target="_blank"
+                        >Cisco Networking Academy Cybersecurity Essentials
+                        certification</a
+                    >, which I received for completing and passing the exam. I
+                    know it's not the most impressive certification out there,
+                    but I'm proud of it nonetheless! And hey it was free to take
+                    the exam, due to my school 😁.
+                </p>
+            </div>
+            <div class="content right">
+                <img src="/imgs/home.jpg" alt="me!" />
+            </div>
+        </section>
+    </body>
+    <footer>
+        <p>
+            &#169; 2023
+            <a href="https://github.com/AntonVanAssche/ant0n.tk" target="_blank"
+                >Anton Van Assche</a
+            >
+        </p>
+    </footer>
+    <script src="/js/nav.js"></script>
+    <script src="/js/theme.js"></script>
 </html>
-
