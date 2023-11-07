@@ -1,5 +1,26 @@
 "use strict";
 
+// Fade in animation when the page is loaded.
+// Relaces the need for Jquery: $(".preloader").delay(200).fadeOut("slow");
+const fadeOut = () => {
+    const preloader = document.querySelector(".preloader");
+    let opacity = 1;
+    const start = Date.now();
+    const animationDuration = 1000;
+    const fadeOut = () => {
+        const elapsed = Date.now() - start;
+        if (elapsed < animationDuration) {
+            opacity = 1 - elapsed / animationDuration;
+            preloader.style.opacity = opacity;
+            requestAnimationFrame(fadeOut);
+        } else {
+            preloader.style.opacity = 0;
+            preloader.style.display = "none";
+        }
+    };
+    requestAnimationFrame(fadeOut);
+};
+
 // Define the toggle button.
 const darkModeToggle = document.getElementById("darkmode-toggle");
 
@@ -88,6 +109,8 @@ const init = () => {
             localStorage.setItem("darkMode", "system");
             break;
     }
+
+    fadeOut();
 };
 
 window.onload = init;
