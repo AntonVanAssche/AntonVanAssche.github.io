@@ -303,6 +303,19 @@ button:is(:hover, :focus) svg {
     background-color: var(--background-color2);
 }
 
+/* <--Adaptive button position--> */
+@media (max-width: 992px) {
+    .back-to-top {
+        bottom: 8rem;
+        right: 2rem;
+    }
+
+    .darkmode-toggle {
+        bottom: 5rem;
+        right: 2rem;
+    }
+}
+
 .preloader {
     position: fixed;
     inset: 0;
