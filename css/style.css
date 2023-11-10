@@ -345,57 +345,43 @@ button:is(:hover, :focus) svg {
     width: 75%;
 }
 
-blockquote {
-    font-family: 'EB Garamond', serif;
-    margin-top: 0.25em;
-    padding: 0;
+.sidekick {
     position: relative;
-    width: 100%;
-    font-size: 1vw;
-    line-height: 1.4;
+    margin-top: 1em;
+    padding-left: 1em;
+    border-left: 0.2em solid var(--accent-color);
+    font-family: 'Roboto', serif;
+    font-size: 1.5em;
+    line-height: 1.5em;
+    font-weight: 150;
     text-rendering: optimizeLegibility;
     font-smoothing: antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-fon-smoothing: grayscale;
 }
 
-blockquote p:first-of-type:before {
+.sidekick:before, .sidekick:after {
+    font-family: Calibri;
+    color: var(--accent-color);
+    font-size: 34px;
+}
+
+.sidekick:before {
+    content: '\201e';
+}
+
+.sidekick:after {
     content: '\201c';
 }
 
-blockquote p:last-of-type:after {
-    content: '\201d';
+.sidekick cite {
+    font-size: 50%;
+    text-align:center;
+    top:50%
 }
 
-blockquote cite {
-    position: relative;
-}
-
-blockquote cite:before {
-    content: '–';
-}
-
-@media screen and (max-width: 1600px) {
-    blockquote {
-        font-size: 2vw;
-    }
-}
-
-@media all and (max-width: 1200px) {
-    blockquote {
-        font-size: 2.5vw;
-    }
-}
-
-@media all and (max-width: 600px) {
-    blockquote {
-        font-size: 18px;
-    }
-    blockquote {
-        align-items: center;
-        width: 75%;
-        min-width: 75%;
-    }
+.sidekick cite:before {
+    content: ' \2015 ';
 }
 
 .left img {
@@ -518,12 +504,14 @@ blockquote cite:before {
         align-items: center;
         max-height: 50vh;
         width: 100%;
-
-        border-radius: 1.125rem;
     }
 
     .content h1 {
         font-size: 1.5rem;
+    }
+
+    .sidekick {
+        font-size: 1em;
     }
 
     .left h1 {
@@ -532,7 +520,6 @@ blockquote cite:before {
 
     .content :is(p, h1) {
         margin-bottom: 1rem;
-
         max-width: 100%;
         min-width: 75%;
     }
