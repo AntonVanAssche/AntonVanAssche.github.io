@@ -351,8 +351,8 @@ button:is(:hover, :focus) svg {
 
 .anim-typewriter {
     animation:
-        typewriter 1.25s steps(15) 1s 1 normal both,
-        blinkTextCursor 600ms steps(15) infinite normal;
+        typewriter 1.25s steps(17) 1s 1 normal both,
+        blinkTextCursor 600ms steps(17) infinite normal;
 }
 
 @keyframes typewriter {
@@ -360,7 +360,7 @@ button:is(:hover, :focus) svg {
         width: 0;
     }
     to {
-        width: 8.5em;
+        width: 7.5em;
     }
 }
 @keyframes blinkTextCursor {
