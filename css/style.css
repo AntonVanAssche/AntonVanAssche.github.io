@@ -148,21 +148,14 @@ a:hover {
 }
 
 .container {
-    padding-top: 10%;
-    padding-bottom: 10%;
+    padding-top: 5%;
+    padding-bottom: 5%;
     text-align: left;
-    width: 65%;
+    width: 50%;
     overflow: hidden;
     margin: auto;
     counter-reset: definition;
     text-rendering: optimizeLegibility;
-}
-
-.container img {
-    float: right;
-    margin: 20px;
-    padding-bottom: 2px;
-    max-width: 300px;
 }
 
 .container a {
@@ -172,12 +165,18 @@ a:hover {
     text-decoration: underline;
 }
 
-.about-image-mobile {
+.float-mobile {
     display: none;
+    text-align: center;
+    margin-top: 1em;
 }
 
-.about-image-desktop {
-    display: block;
+.float-desktop {
+    float: right;
+    margin: 20px;
+    padding-bottom: 2px;
+    max-width: 300px;
+    text-align: center;
 }
 
 .footer {
@@ -318,11 +317,11 @@ button:is(:hover, :focus) svg {
         padding-bottom: 20%;
     }
 
-    .about-image-mobile {
+    .float-mobile {
         display: block;
     }
 
-    .about-image-desktop {
+    .float-desktop {
         display: none;
     }
 }
