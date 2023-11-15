@@ -102,15 +102,8 @@ footer {
     transform: translateY(-50%);
 }
 
-.title {
-    text-align: left;
-    margin-bottom: 0.5em;
-    margin-top: 1.5em;
-}
-
 .date {
     font-size: 14px;
-    color: #948985;
 }
 
 a {
