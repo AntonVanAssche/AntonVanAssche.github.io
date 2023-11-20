@@ -216,6 +216,13 @@ button:is(:hover, :focus) svg {
     stroke: var(--accent-color);
 }
 
+pre {
+    overflow-x: auto;
+    padding: 1em;
+    background-color: var(--background-color2);
+    border-radius: 0.5em;
+}
+
 /* <--Back to top button--> */
 .back-to-top {
     position: fixed;
