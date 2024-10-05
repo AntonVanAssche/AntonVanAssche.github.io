@@ -18,10 +18,6 @@ plugin to do it all within Neovim. You might say that I'm lazy, some say I'm not
 
 I hope that others who have similar needs will find Music Controls useful as well.
 
-## Demo
-
-![Music Controls Demo](https://github.com/AntonVanAssche/music-controls.nvim/blob/master/assets/preview.gif?raw=true)
-
 ## Features
 
 - [1] Display the currently playing song.

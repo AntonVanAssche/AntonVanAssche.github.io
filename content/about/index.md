@@ -4,8 +4,6 @@ author = 'Anton Van Assche'
 date = '2024-10-02'
 +++
 
-{{< image src="about.jpg" alt="Hello Friend" position="right" style="border-radius: 8px; width: 25%; float: right; margin: 0 0 1em 1em;" >}}
-
 Hey there! I'm Anton Van Assche, a Linux System Administrator with a degree in
 Applied Computer Science from Ghent University of Applied Sciences and Arts,
 specializing in System and Network Administration. I work for Smals, seconded

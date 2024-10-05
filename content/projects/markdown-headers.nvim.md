@@ -21,10 +21,6 @@ Markdown, whether for academic notes, technical documentation, or personal
 projects. The goal is to make the Markdown editing experience in Neovim more
 enjoyable and efficient, improving your productivity.
 
-## Demo
-
-![Markdown Headers Demo](https://github.com/AntonVanAssche/md-headers.nvim/raw/master/assets/preview.gif?raw=true)
-
 ## Features
 
 - [1] Quickly access a clean list of all Markdown and HTML headings in your file.

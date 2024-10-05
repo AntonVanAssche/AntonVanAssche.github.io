@@ -10,10 +10,6 @@ to encrypt/decrypt the files where the passwords are stored . This means the
 passwords are 100% stored locally, so you don't have to trust a third party to
 store your passwords.
 
-## Demo
-
-![BashPass Demo](https://github.com/AntonVanAssche/BashPass/raw/master/assets/bashpass.gif?raw=true)
-
 ## Features
 
 - [1] Add/edit/delete passwords.

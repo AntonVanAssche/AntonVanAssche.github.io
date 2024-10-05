@@ -1,68 +1,76 @@
-baseurl       = "localhost"
-title         = "My Blog"
-languageCode  = "en-us"
-theme         = "hello-friend-ng"
-paginate      = 10
-enableGitInfo = true
+baseurl            = "localhost"
+title              = "My Blog"
+languageCode       = "en-us"
+theme              = "anatole"
+paginate           = 10
+enableGitInfo      = true
+enableRobotsTXT    = true
+pygmentsCodeFences = true
+pygmentsUseClasses = true
 
 [params]
-  dateform              = "Jan 2, 2006"
-  dateformShort         = "Jan 2"
-  dateformNum           = "2006-01-02"
-  dateformNumTime       = "2006-01-02 15:04"
-  homeSubtitle          = "Linux System Administrator | Open-Source Enthusiast"
-  disableReadOtherPosts = false
-  enableSharingButtons  = true
-  description           = "My new homepage or blog"
-  keywords              = "homepage, blog"
-  images                = [""]
+title                = "Hi, I'm Anton"
+author               = "Anton Van Assche"
+profilePicture       = "profile.jpg"
+description          = "Linux System Administrator | Open-Source Enthusiast"
+copyright            = "2024-{{ YEAR }}"
+singleDateFormat     = "Mon, Jan 2, 2006"
+indexDateFormat      = "Mon, Jan 2, 2006"
+listDateFormat       = "Jan 2"
+doNotLoadAnimations  = true
+customCss            = ["css/syntax.css"]
+displayMode          = "light"
+disableThemeSwitcher = true
 
-[taxonomies]
-    category = "blog"
-    tag      = "tags"
-    series   = "series"
-
-[languages]
-  [languages.en]
-    title          = "Hi, I'm Anton"
-    keywords       = ""
-    copyright      = '<a href = "https://creativecommons.org/licenses/by-nc/4.0/" target = "_blank" rel = "noopener">CC BY-NC 4.0</a>'
-    readOtherPosts = "Read other posts"
-
-    [languages.en.params.logo]
-      logoText     = "$ cd /home/Anton/"
-      logoHomeLink = "/"
-
-  [[menu.main]]
-    identifier = "about"
-    name       = "About"
-    url        = "/about"
-
-  [[menu.main]]
-    identifier = "blog"
-    name       = "Posts"
-    url        = "/posts"
-
-  [[menu.main]]
-    identifier = "projects"
-    name       = "Projects"
-    url        = "/projects"
-
-  [[params.social]]
+  [[params.socialIcons]]
+    icon = "fab fa-github"
     name = "github"
     url  = "https://www.github.com/AntonVanAssche"
 
-  [[params.social]]
+  [[params.socialIcons]]
+    icon = "fab fa-gitlab"
     name = "gitlab"
     url  = "https://gitlab.com/AntonVanAssche"
 
-  [[params.social]]
+  [[params.socialIcons]]
+    icon = "fab fa-linkedin"
     name = "linkedin"
     url  = "https://www.linkedin.com/in/anton-van-assche/"
 
-  [[params.social]]
+  [[params.socialIcons]]
+    icon = "fas fa-envelope"
     name = "email"
     url  = "mailto:vanasscheanton@duck.com"
+
+  [[params.socialIcons]]
+    icon = "fa fa-key"
+    name = "pgp"
+    url  = "https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex"
+
+[menu]
+  [[menu.main]]
+  name       = "Home"
+  identifier = "home"
+  weight     = 100
+  url        = "/"
+
+  [[menu.main]]
+  name       = "About"
+  weight     = 200
+  identifier = "about"
+  url        = "/about/"
+
+  [[menu.main]]
+  name       = "Posts"
+  weight     = 300
+  identifier = "posts"
+  url        = "/post/"
+
+  [[menu.main]]
+  name       = "Projects"
+  weight     = 400
+  identifier = "projects"
+  url        = "/projects/"
 
 [frontmatter]
   lastmod = ["lastmod", ":git", "date", "publishDate"]
