@@ -3,7 +3,7 @@
   --bg: #fff;
   --text: #000;
   --border: #000;
-  --link: blue;
+  --link: #1e90ff;
   --fs: clamp(15px, 2.2vw, 20px);
   --max-ch: 60ch;
   --gap: 1rem;
@@ -15,7 +15,7 @@
     --bg: #000;
     --text: #fff;
     --border: #fff;
-    --link: blue;
+    --link: #1e90ff;
   }
 }
 
