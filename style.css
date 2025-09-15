@@ -36,6 +36,21 @@ a:hover { opacity: .85; }
 ul { list-style: disc; padding-left: 1.5rem; }
 li { margin: .5rem 0; }
 .reading-time { color: #666; font-size: 0.9em; }
+blockquote {
+  margin: 1.5em 0; padding-left: 1em;
+  border-left: 2px solid #666; font-style: italic;
+  color: #666;
+}
+blockquote cite {
+  display: block; margin-top: 0.5em;
+  font-style: normal; font-size: 0.75em;
+  color: #666;
+}
+code {
+  background-color: #202020; color: #ff6b6b;
+  font-style: italic; font-size: 0.85em;
+  padding: 0.1em 0.3em; border-radius: 3px;
+}
 
 /* ===== Navbar ===== */
 .navbar {
