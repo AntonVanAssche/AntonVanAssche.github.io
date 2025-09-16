@@ -1,133 +1,246 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Why Your Website Should Be Under 14kB - Anton Van Assche</title>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="icon" href="/assets/favicon.png" type="image/png">
-</head>
-<body>
-  <div class="container">
-    <nav class="navbar">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/posts/" class="active">Posts</a>
-    </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Why Your Website Should Be Under 14kB - Anton Van Assche</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/posts/" class="active">Posts</a>
+      </nav>
 
-    <main>
-      <article>
-        <h1>Why Your Website Should Be Under 14kB</h1>
-        <p><em>by Anton Van Assche</em> - <span class="reading-time">7 min read</span></p>
+      <main>
+        <article>
+          <h1>Why Your Website Should Be Under 14kB</h1>
+          <p>
+            <em>by Anton Van Assche</em> -
+            <span class="reading-time">7 min read</span>
+          </p>
 
+          <p>
+            If you enjoyed
+            <a
+              href="/posts/2025/why-this-website-looks-like-it-was-built-in-1999-but-isnt/"
+              >my previous post</a
+            >
+            about why simplicity rules, this one is for the nerds, the ones who
+            want to know
+            <strong>why</strong> keeping a page under 14kB isn't just bragging
+            rights.
+          </p>
+          <p>
+            It has some logic behind it. A lot of it, actually. It boils down to
+            TCP slow start, latency, how your browser works, and that thing
+            called user experience.
+          </p>
+          <p>
+            (Yes, last time I was just playing around. This time, I actually
+            wanted to understand what makes pages blazing fast.)
+          </p>
+
+          <h2>Small Pages, Big Wins</h2>
+          <p>
+            Smaller pages load faster - obvious, right? But there's more. A
+            smaller page can:
+          </p>
+          <ul>
+            <li>Render content faster (improving first contentful paint)</li>
+            <li>Reduce bounce rates and improve user satisfaction</li>
+            <li>
+              Use less bandwidth, which matters for mobile or metered
+              connections
+            </li>
+            <li>Work on older browsers, slow networks, and low-end devices</li>
+            <li>
+              Improve SEO (Search Engine Optimization) by positively impacting
+              Core Web Vitals
+            </li>
+          </ul>
+
+          <h2>What is TCP Slow Start?</h2>
+          <p>
+            TCP (Transmission Control Protocol) ensures data reaches the browser
+            reliably. When a browser first requests a page, the server doesn't
+            know the available bandwidth. TCP slow start solves this by sending
+            a small amount of data, waiting for an acknowledgment (ACK), then
+            gradually increasing the amount sent.
+          </p>
+
+          <p>
+            Each round trip adds latency. Fitting your page into the first 10
+            TCP packets (&#126;14kB) allows the browser to start rendering
+            immediately, avoiding extra delays.
+          </p>
+
+          <h2>Why 14kB?</h2>
+          <p>
+            A TCP packet can carry roughly 1460 bytes of payload (1500 bytes max
+            minus headers). 10 packets &times; 1460 bytes &asymp; 14,600 bytes
+            (&#126;14kB). Staying under this limit helps pages load fast before
+            congestion control slows data flow.
+          </p>
+
+          <h2>Latency Matters</h2>
+          <p>
+            Even a single round trip can add 50–500ms depending on connection
+            type. Satellite internet, crowded mobile networks, and high-traffic
+            servers can increase latency further. Multiple round trips multiply
+            delays, and HTTPS adds extra handshakes. Keeping the initial payload
+            small is critical.
+          </p>
+
+          <h2>What to Include in Your First 14kB</h2>
+          <ul>
+            <li>Critical CSS and minimal JS for initial render</li>
+            <li>Essential text content visible above the fold</li>
+            <li>Small images or placeholders</li>
+          </ul>
+          <p>
+            All other scripts, large frameworks, tracking pixels, and videos can
+            load asynchronously after the initial render.
+          </p>
+
+          <h2>Caveats &amp; Modern Protocols</h2>
+          <p>
+            HTTP/2 and HTTP/3 change the dynamics slightly with multiplexing,
+            but TCP slow start still applies. Compressing your payload helps,
+            but the first &#126;14kB uncompressed is what matters for initial
+            render speed.
+          </p>
+
+          <h2>Conclusion</h2>
+          <p>
+            Making a page under 14kB isn't a law, it's a rule of thumb that
+            forces you to prioritize speed, simplicity, and efficiency. Think of
+            it as the nerdy sequel to my previous post: all the charm, none of
+            the fluff, plus numbers to back it up.
+          </p>
+
+          <p style="font-size: 0.75em; font-style: italic; color: #666">
+            P.S. If you just want the fun version, check out
+            <a
+              href="/posts/2025/why-this-website-looks-like-it-was-built-in-1999-but-isnt/"
+              >the humorous primer</a
+            >.
+          </p>
+
+          <h2>References & Further Reading</h2>
+          <ul>
+            <li>
+              <a
+                href="https://www.rfc-editor.org/rfc/rfc793"
+                target="_blank"
+                rel="noopener"
+                >RFC 793 - TCP</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://www.rfc-editor.org/rfc/rfc2616"
+                target="_blank"
+                rel="noopener"
+                >RFC 2616 - HTTP/1.1</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://en.wikipedia.org/wiki/TCP_congestion_control#Slow_start"
+                target="_blank"
+                rel="noopener"
+                >Wikipedia: TCP Congestion Control - Slow Start</a
+              >
+            </li>
+            <li>
+              <a href="https://hpbn.co/" target="_blank" rel="noopener"
+                >High Performance Browser Networking</a
+              >
+              - Ilya Grigorik
+            </li>
+            <li>
+              <a
+                href="https://sirupsen.com/napkin/problem-15"
+                target="_blank"
+                rel="noopener"
+                >Increase HTTP Performance by Fitting In the Initial TCP Slow
+                Start Window</a
+              >
+              - Simon Hørup Eskildsen
+            </li>
+            <li>
+              <a
+                href="https://www.tunetheweb.com/blog/critical-resources-and-the-first-14kb/"
+                target="_blank"
+                rel="noopener"
+                >Critical Resources and the First 14 KB - A Review</a
+              >
+            </li>
+            <li>
+              <a
+                href="https://web.dev/articles/performance-optimizing-content-efficiency"
+                target="_blank"
+                rel="noopener"
+                >Optimizing Content Efficiency</a
+              >
+              - web.dev
+            </li>
+            <li>
+              <a
+                href="https://web.dev/articles/fcp"
+                target="_blank"
+                rel="noopener"
+                >First Contentful Paint (FCP)</a
+              >
+              - web.dev
+            </li>
+            <li>
+              <a
+                href="https://developers.google.com/search/docs/appearance/core-web-vitals"
+                target="_blank"
+                rel="noopener"
+                >Core Web Vitals</a
+              >
+              - Google Developers
+            </li>
+            <li>
+              <a
+                href="https://vercel.com/blog/how-core-web-vitals-affect-seo"
+                target="_blank"
+                rel="noopener"
+                >How Core Web Vitals Affect SEO</a
+              >
+              - Vercel Blog
+            </li>
+          </ul>
+        </article>
+      </main>
+
+      <footer>
         <p>
-          If you enjoyed <a href="/posts/2025/why-this-website-looks-like-it-was-built-in-1999-but-isnt/">my previous post</a>
-          about why simplicity rules, this one is for the nerds, the ones who want to know
-          <strong>why</strong> keeping a page under 14kB isn't just bragging rights.
+          &copy; 2025
+          <a href="https://github.com/AntonVanAssche/">Anton Van Assche</a>
         </p>
-        <p>
-          It has some logic behind it. A lot of it, actually. It boils down to TCP slow start,
-          latency, how your browser works, and that thing called user experience.
-        </p>
-        <p>
-          (Yes, last time I was just playing around. This time, I actually wanted to understand
-          what makes pages blazing fast.)
-        </p>
-
-
-        <h2>Small Pages, Big Wins</h2>
-        <p>
-          Smaller pages load faster - obvious, right? But there's more. A smaller page can:
-        </p>
-        <ul>
-          <li>Render content faster (improving first contentful paint)</li>
-          <li>Reduce bounce rates and improve user satisfaction</li>
-          <li>Use less bandwidth, which matters for mobile or metered connections</li>
-          <li>Work on older browsers, slow networks, and low-end devices</li>
-          <li>Improve SEO (Search Engine Optimization) by positively impacting Core Web Vitals</li>
-        </ul>
-
-        <h2>What is TCP Slow Start?</h2>
-        <p>
-          TCP (Transmission Control Protocol) ensures data reaches the browser reliably. When a
-          browser first requests a page, the server doesn't know the available bandwidth. TCP slow
-          start solves this by sending a small amount of data, waiting for an acknowledgment (ACK),
-          then gradually increasing the amount sent.
-        </p>
-
-        <p>
-          Each round trip adds latency. Fitting your page into the first 10 TCP packets (&#126;14kB)
-          allows the browser to start rendering immediately, avoiding extra delays.
-        </p>
-
-        <h2>Why 14kB?</h2>
-        <p>
-          A TCP packet can carry roughly 1460 bytes of payload (1500 bytes max minus headers). 10 packets
-          &times; 1460 bytes &asymp; 14,600 bytes (&#126;14kB). Staying under this limit helps pages load fast before
-          congestion control slows data flow.
-        </p>
-
-        <h2>Latency Matters</h2>
-        <p>
-          Even a single round trip can add 50–500ms depending on connection type. Satellite internet, crowded
-          mobile networks, and high-traffic servers can increase latency further. Multiple round trips
-          multiply delays, and HTTPS adds extra handshakes. Keeping the initial payload small is critical.
-        </p>
-
-        <h2>What to Include in Your First 14kB</h2>
-        <ul>
-          <li>Critical CSS and minimal JS for initial render</li>
-          <li>Essential text content visible above the fold</li>
-          <li>Small images or placeholders</li>
-        </ul>
-        <p>
-          All other scripts, large frameworks, tracking pixels, and videos can load asynchronously
-          after the initial render.
-        </p>
-
-        <h2>Caveats &amp; Modern Protocols</h2>
-        <p>
-          HTTP/2 and HTTP/3 change the dynamics slightly with multiplexing, but TCP slow start still applies.
-          Compressing your payload helps, but the first &#126;14kB uncompressed is what matters for initial render speed.
-        </p>
-
-        <h2>Conclusion</h2>
-        <p>
-          Making a page under 14kB isn't a law, it's a rule of thumb that forces you to prioritize
-          speed, simplicity, and efficiency. Think of it as the nerdy sequel to my previous post:
-          all the charm, none of the fluff, plus numbers to back it up.
-        </p>
-
-        <p style="font-size: 0.75em; font-style: italic; color: #666;">
-          P.S. If you just want the fun version, check out <a href="/posts/2025/why-this-website-looks-like-it-was-built-in-1999-but-isnt/">the humorous primer</a>.
-        </p>
-
-        <h2>References & Further Reading</h2>
-        <ul>
-          <li><a href="https://www.rfc-editor.org/rfc/rfc793" target="_blank" rel="noopener">RFC 793 - TCP</a></li>
-          <li><a href="https://www.rfc-editor.org/rfc/rfc2616" target="_blank" rel="noopener">RFC 2616 - HTTP/1.1</a></li>
-          <li><a href="https://en.wikipedia.org/wiki/TCP_congestion_control#Slow_start" target="_blank" rel="noopener">Wikipedia: TCP Congestion Control - Slow Start</a></li>
-          <li><a href="https://hpbn.co/" target="_blank" rel="noopener">High Performance Browser Networking</a> - Ilya Grigorik</li>
-          <li><a href="https://sirupsen.com/napkin/problem-15" target="_blank" rel="noopener">Increase HTTP Performance by Fitting In the Initial TCP Slow Start Window</a> - Simon Hørup Eskildsen</li>
-          <li><a href="https://www.tunetheweb.com/blog/critical-resources-and-the-first-14kb/" target="_blank" rel="noopener">Critical Resources and the First 14 KB - A Review</a></li>
-          <li><a href="https://web.dev/articles/performance-optimizing-content-efficiency" target="_blank" rel="noopener">Optimizing Content Efficiency</a> - web.dev</li>
-          <li><a href="https://web.dev/articles/fcp" target="_blank" rel="noopener">First Contentful Paint (FCP)</a> - web.dev</li>
-          <li><a href="https://developers.google.com/search/docs/appearance/core-web-vitals" target="_blank" rel="noopener">Core Web Vitals</a> - Google Developers</li>
-          <li><a href="https://vercel.com/blog/how-core-web-vitals-affect-seo" target="_blank" rel="noopener">How Core Web Vitals Affect SEO</a> - Vercel Blog</li>
-        </ul>
-      </article>
-    </main>
-
-    <footer>
-      <p>&copy; 2025 <a href="https://github.com/AntonVanAssche/">Anton Van Assche</a></p>
-      <div class="contact">
-        <a href="https://github.com/AntonVanAssche" target="_blank">GitHub</a>
-        <a href="https://gitlab.com/AntonVanAssche" target="_blank">GitLab</a>
-        <a href="https://www.linkedin.com/in/anton-van-assche/" target="_blank">LinkedIn</a>
-        <a href="mailto:vanasscheanton@duck.com">Email</a>
-        <a href="https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex" target="_blank">GPG Key</a>
-      </div>
-    </footer>
-  </div>
-</body>
+        <div class="contact">
+          <a href="https://github.com/AntonVanAssche" target="_blank">GitHub</a>
+          <a href="https://gitlab.com/AntonVanAssche" target="_blank">GitLab</a>
+          <a
+            href="https://www.linkedin.com/in/anton-van-assche/"
+            target="_blank"
+            >LinkedIn</a
+          >
+          <a href="mailto:vanasscheanton@duck.com">Email</a>
+          <a
+            href="https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex"
+            target="_blank"
+            >GPG Key</a
+          >
+        </div>
+      </footer>
+    </div>
+  </body>
 </html>

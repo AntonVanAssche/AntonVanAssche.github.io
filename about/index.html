@@ -1,75 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>About - Anton Van Assche</title>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="icon" href="/assets/favicon.png" type="image/png">
-</head>
-<body>
-  <div class="container">
-    <nav class="navbar">
-      <a href="/">Home</a>
-      <a href="/about/" class="active">About</a>
-      <a href="/posts/">Posts</a>
-    </nav>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About - Anton Van Assche</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/about/" class="active">About</a>
+        <a href="/posts/">Posts</a>
+      </nav>
 
-    <main>
-      <h2>About Me</h2>
+      <main>
+        <h2>About Me</h2>
 
-      <div class="about-text clearfix">
-        <p>
-          Hi, I'm Anton Van Assche, a Linux System & Automation Engineer at SFPD
-          (Federale Pensioendienst - Service fédéral des pensions).
-        </p>
+        <div class="about-text clearfix">
+          <p>
+            Hi, I'm Anton Van Assche, a Linux System & Automation Engineer at
+            SFPD (Federale Pensioendienst - Service fédéral des pensions).
+          </p>
 
-        <div class="about-image">
-          <img src="/assets/me.png" alt="It's a me (not Mario)!">
+          <div class="about-image">
+            <img src="/assets/me.png" alt="It's a me (not Mario)!" />
+          </div>
+
+          <p>
+            I spend my days automating IT infrastructures, from managing Red Hat
+            Linux virtual machines to OpenShift clusters. My go-to tools are
+            RHEL, OpenShift, Ansible, Puppet, Bash, and Python.
+          </p>
+
+          <p>
+            I love making complex systems reliable and repeatable, scripting my
+            way out of repetitive tasks, and tinkering with my homelab or Neovim
+            plugins for fun (I use Neovim btw!). Sometimes, when no existing
+            tool fits the bill, I build my own overly engineered CLI utilities,
+            looking at you,
+            <a href="https://github.com/AntonVanAssche/sw">sw</a>.
+          </p>
+
+          <p>
+            Outside of tech, I'm a long-time épée fencer and a music enthusiast,
+            ranging through all kinds of genres.
+          </p>
+
+          <div class="projects">
+            <h3>Some Projects</h3>
+            <ul>
+              <li>
+                <a
+                  href="https://github.com/AntonVanAssche/music-controls.nvim"
+                  target="_blank"
+                  >music-controls.nvim</a
+                >
+                - Neovim plugin to control music players.
+              </li>
+              <li>
+                <a
+                  href="https://github.com/AntonVanAssche/date-time-inserter.nvim"
+                  target="_blank"
+                  >date-time-inserter.nvim</a
+                >
+                - Neovim plugin to insert date and time.
+              </li>
+              <li>
+                <a
+                  href="https://github.com/AntonVanAssche/md-headers.nvim"
+                  target="_blank"
+                  >md-headers.nvim</a
+                >
+                - Neovim plugin to easily navigate Markdown headers.
+              </li>
+              <li>
+                <a
+                  href="https://github.com/AntonVanAssche/puppetcode"
+                  target="_blank"
+                  >puppetcode</a
+                >
+                - Puppetcode for my homelab.
+              </li>
+              <li>
+                <a href="https://github.com/AntonVanAssche/sw" target="_blank"
+                  >sw</a
+                >
+                - An overly complicated wallpaper switcher for Wayland.
+              </li>
+            </ul>
+          </div>
         </div>
+      </main>
 
+      <footer>
         <p>
-          I spend my days automating IT infrastructures, from managing Red Hat Linux virtual machines
-          to OpenShift clusters. My go-to tools are RHEL, OpenShift, Ansible, Puppet, Bash, and
-          Python.
+          &copy; 2025
+          <a href="https://github.com/AntonVanAssche/">Anton Van Assche</a>
         </p>
-
-        <p>
-          I love making complex systems reliable and repeatable, scripting my way out of repetitive
-          tasks, and tinkering with my homelab or Neovim plugins for fun (I use Neovim btw!).
-          Sometimes, when no existing tool fits the bill, I build my own overly engineered CLI
-          utilities, looking at you, <a href="https://github.com/AntonVanAssche/sw">sw</a>.
-        </p>
-
-        <p>
-          Outside of tech, I'm a long-time épée fencer and a music enthusiast, ranging through all
-          kinds of genres.
-        </p>
-
-        <div class="projects">
-          <h3>Some Projects</h3>
-          <ul>
-            <li><a href="https://github.com/AntonVanAssche/music-controls.nvim" target="_blank">music-controls.nvim</a> - Neovim plugin to control music players.</li>
-            <li><a href="https://github.com/AntonVanAssche/date-time-inserter.nvim" target="_blank">date-time-inserter.nvim</a> - Neovim plugin to insert date and time.</li>
-            <li><a href="https://github.com/AntonVanAssche/md-headers.nvim" target="_blank">md-headers.nvim</a> - Neovim plugin to easily navigate Markdown headers.</li>
-            <li><a href="https://github.com/AntonVanAssche/puppetcode" target="_blank">puppetcode</a> - Puppetcode for my homelab.</li>
-            <li><a href="https://github.com/AntonVanAssche/sw" target="_blank">sw</a> - An overly complicated wallpaper switcher for Wayland.</li>
-          </ul>
+        <div class="contact">
+          <a href="https://github.com/AntonVanAssche" target="_blank">GitHub</a>
+          <a href="https://gitlab.com/AntonVanAssche" target="_blank">GitLab</a>
+          <a
+            href="https://www.linkedin.com/in/anton-van-assche/"
+            target="_blank"
+            >LinkedIn</a
+          >
+          <a href="mailto:vanasscheanton@duck.com">Email</a>
+          <a
+            href="https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex"
+            target="_blank"
+            >GPG Key</a
+          >
         </div>
-
-      </div>
-    </main>
-
-    <footer>
-      <p>&copy; 2025 <a href="https://github.com/AntonVanAssche/">Anton Van Assche</a></p>
-      <div class="contact">
-        <a href="https://github.com/AntonVanAssche" target="_blank">GitHub</a>
-        <a href="https://gitlab.com/AntonVanAssche" target="_blank">GitLab</a>
-        <a href="https://www.linkedin.com/in/anton-van-assche/" target="_blank">LinkedIn</a>
-        <a href="mailto:vanasscheanton@duck.com">Email</a>
-        <a href="https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex" target="_blank">GPG Key</a>
-      </div>
-    </footer>
-  </div>
-</body>
+      </footer>
+    </div>
+  </body>
 </html>
