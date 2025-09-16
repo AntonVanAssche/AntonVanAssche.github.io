@@ -11,86 +11,152 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #000; --text: #fff; --border: #fff; }
+  :root {
+    --bg: #000;
+    --text: #fff;
+    --border: #fff;
+  }
 }
 
 /* ===== Base ===== */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
-  background: var(--bg); color: var(--text);
+  background: var(--bg);
+  color: var(--text);
   font-family: system-ui, sans-serif;
-  font-size: var(--fs); line-height: 1.6;
+  font-size: var(--fs);
+  line-height: 1.6;
 }
 
 .container {
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   width: min(var(--max-ch), 96vw);
-  margin: 0 auto; padding: var(--gap);
+  margin: 0 auto;
+  padding: var(--gap);
 }
 
-p { margin-bottom: 1.25rem; }
-a { color: var(--link); text-decoration: underline; text-underline-offset: 2px; }
-a:hover { opacity: .85; }
-ul { list-style: disc; padding-left: 1.5rem; }
-li { margin: .5rem 0; }
-.reading-time { color: #666; font-size: 0.9em; }
+p {
+  margin-bottom: 1.25rem;
+}
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+a:hover {
+  opacity: 0.85;
+}
+ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+li {
+  margin: 0.5rem 0;
+}
+.reading-time {
+  color: #666;
+  font-size: 0.9em;
+}
 blockquote {
-  margin: 1.5em 0; padding-left: 1em;
-  border-left: 2px solid #666; font-style: italic;
+  margin: 1.5em 0;
+  padding-left: 1em;
+  border-left: 2px solid #666;
+  font-style: italic;
   color: #666;
 }
 blockquote cite {
-  display: block; margin-top: 0.5em;
-  font-style: normal; font-size: 0.75em;
+  display: block;
+  margin-top: 0.5em;
+  font-style: normal;
+  font-size: 0.75em;
   color: #666;
 }
 code {
-  background-color: #202020; color: #ff6b6b;
-  font-style: italic; font-size: 0.85em;
-  padding: 0.1em 0.3em; border-radius: 3px;
+  background-color: #202020;
+  color: #ff6b6b;
+  font-style: italic;
+  font-size: 0.85em;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
 }
 
 /* ===== Navbar ===== */
 .navbar {
-  display: flex; gap: var(--nav-gap);
+  display: flex;
+  gap: var(--nav-gap);
   border-bottom: 1px solid var(--border);
-  padding-bottom: .5rem; margin-bottom: 1.75rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.75rem;
 }
-.navbar a.active { font-weight: 700; }
+.navbar a.active {
+  font-weight: 700;
+}
 
 /* ===== About Page ===== */
 .about-image {
-  float: right; width: 200px; margin: 0 0 1rem 1rem;
-  border: 1px solid var(--border); border-radius: 8px;
+  float: right;
+  width: 200px;
+  margin: 0 0 1rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 .about-image img {
-  width: 100%; display: block;
-  border: 1px solid var(--border); border-radius: 8px;
+  width: 100%;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
-.clearfix::after { content: ""; display: table; clear: both; }
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
 
 /* ===== Projects ===== */
-.projects { margin-top: 1.5rem; }
+.projects {
+  margin-top: 1.5rem;
+}
 .projects h3 {
-  font-size: 1.2rem; margin-bottom: .75rem; font-weight: 600;
-  border-bottom: 1px solid var(--border); padding-bottom: .25rem;
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25rem;
 }
 
 /* ===== Footer ===== */
 footer {
   border-top: 1px solid var(--border);
-  padding-top: 1rem; margin-top: auto;
-  font-size: .9rem; text-align: center;
+  padding-top: 1rem;
+  margin-top: auto;
+  font-size: 0.9rem;
+  text-align: center;
 }
 footer .contact {
-  display: flex; flex-wrap: wrap; gap: .5rem;
-  justify-content: center; margin-top: .5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
 
 /* ===== Mobile ===== */
 @media (max-width: 500px) {
-  :root { --fs: clamp(16px, 3.5vw, 20px); --nav-gap: 1rem; --gap: .9rem; }
-  .about-image { float: none; width: 100%; margin: 0 auto 1rem; }
+  :root {
+    --fs: clamp(16px, 3.5vw, 20px);
+    --nav-gap: 1rem;
+    --gap: 0.9rem;
+  }
+  .about-image {
+    float: none;
+    width: 100%;
+    margin: 0 auto 1rem;
+  }
 }
