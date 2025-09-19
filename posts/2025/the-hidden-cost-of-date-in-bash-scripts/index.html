@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Hidden Cost of date in Bash Scripts - Anton Van Assche</title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/posts/" class="active">Posts</a>
+      </nav>
+
+      <main>
+        <article>
+          <h1>The Hidden Cost of date in Bash Scripts</h1>
+          <p>
+            <em>by Anton Van Assche</em> -
+            <span class="reading-time" aria-label="Estimated reading time: 10"
+              >10 min read</span
+            >
+          </p>
+
+          <p>
+            If you have ever written a quick shell script, chances are you
+            reached for the <code>date</code> command to print a timestamp. It
+            works, it is familiar, and it is everywhere. But if you benchmark it
+            against Bash's built-in <code>printf</code>, the difference in speed
+            is hard to ignore.
+          </p>
+          <p>Consider the following loops:</p>
+          <pre><code>time for i in {1..10000}; do date > /dev/null; done</code></pre>
+          <p>and</p>
+          <pre><code>time for i in {1..10000}; do printf '%(%F %T)T\n' -1 > /dev/null; done</code></pre>
+          <p>
+            The loop that uses <code>date</code> usually takes several seconds,
+            while the <code>printf</code> loop often finishes in a fraction of a
+            second. At first glance, both commands do the same thing - print the
+            current time - so why is one so much slower than the other? The
+            explanation lies in how Unix processes work and in how Bash decides
+            what to run.
+          </p>
+
+          <h2>Processes and External Programs</h2>
+          <p>
+            When you type a command in Bash, the shell has to decide whether
+            that command is something it already knows how to run, called a
+            builtin, or whether it is an external program stored somewhere in
+            your filesystem. The <code>printf</code> you are using in the second
+            loop is a builtin: it lives inside the Bash process itself. By
+            contrast, <code>date</code> is an external program, usually
+            installed as <code>/bin/date</code>.
+          </p>
+          <p>
+            Running an external program like <code>date</code> requires a
+            surprising amount of work. First, Bash searches through the
+            directories listed in your <code>$PATH</code> until it finds the
+            correct executable file. Then it calls <code>fork()</code> to create
+            a child process, which is essentially a duplicate of the shell.
+            Inside this child process, Bash immediately calls
+            <code>exec()</code>, replacing the child's memory with the code of
+            the <code>date</code> program. Only then does
+            <code>date</code> begin to run. When it finishes, the shell must
+            wait for it and collect its exit status.
+          </p>
+          <p>You can picture the process like this:</p>
+          <pre><code>Parent shell (bash)
+   |
+   |-- fork() --------------------------.
+   |                                    |
+   v                                    v
+Parent keeps running             Child process
+(waiting for child)              exec("/bin/date")
+                                        |
+                                        v
+                                 date prints output
+</code></pre>
+          <p>
+            This overhead is tiny if you run <code>date</code> once. But in a
+            loop that executes thousands of times, the cost of forking and
+            executing a new process dominates the runtime.
+          </p>
+
+          <h2>Builtins and In-Process Execution</h2>
+          <p>
+            The story is different with <code>printf</code>. Because it is a
+            builtin, Bash does not need to fork or exec anything. The shell
+            simply calls a C function it already has loaded in memory. All the
+            work happens inside the existing Bash process. There is no process
+            management, no context switching, and no waiting for a child to
+            complete.
+          </p>
+          <pre><code>Parent shell (bash)
+   |
+   |-- directly calls printf builtin
+   |
+   v
+printf formats and prints string
+</code></pre>
+          <p>
+            The result is that Bash can print thousands of timestamps with
+            <code>printf</code> in the time it takes date to spawn and execute a
+            handful of external processes.
+          </p>
+
+          <h2>Tracing the Difference with strace</h2>
+          <p>
+            You can actually observe this overhead with <code>strace</code>.
+            When Bash runs a builtin, the only <code>execve</code> you see is
+            the one that launches Bash itself. When Bash runs an external
+            program like <code>date</code>, there is an <code>execve</code> for
+            Bash <em>and</em> another one for the external binary:
+          </p>
+          <pre><code>$ strace -e execve bash -c 'date' |& grep execve
+execve("/usr/bin/bash", ["bash", "-c", "date"], ...) = 0
+execve("/usr/bin/date", ["date"], ...)              = 0
+</code></pre>
+          <p>
+            Compare that with a builtin like <code>printf</code>. The only
+            <code>execve</code> here is the one that started Bash itself - there
+            is no second process created, because the builtin runs entirely
+            inside the existing shell:
+          </p>
+          <pre><code>$ strace -e execve bash -c "printf '%(%F %T)T\n' -1" |& grep execve
+execve("/usr/bin/bash", ["bash", "-c", "printf '%(%F %T)T\\n' -1"], ...) = 0
+</code></pre>
+          <p>
+            That missing second <code>execve</code> call is the key difference:
+            external commands like <code>date</code> always incur the cost of
+            starting a new process, while builtins like <code>printf</code> stay
+            entirely in-process.
+          </p>
+
+          <h2>Measuring the Difference</h2>
+          <p>
+            The performance gap between <code>printf</code> and
+            <code>date</code> becomes immediately apparent when we measure them
+            across different loop counts. To illustrate, I ran both commands in
+            loops of 100, 1,000, and 10,000 iterations and recorded the
+            <code>real</code>, <code>user</code>, and <code>sys</code> times
+            using the <code>time</code> command.
+          </p>
+          <p>
+            First, here are the benchmarks for the Bash builtin
+            <code>printf</code>:
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Iterations</th>
+                <th>real</th>
+                <th>user</th>
+                <th>sys</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>100</td>
+                <td>0m0.005s</td>
+                <td>0m0.002s</td>
+                <td>0m0.003s</td>
+              </tr>
+              <tr>
+                <td>1000</td>
+                <td>0m0.018s</td>
+                <td>0m0.015s</td>
+                <td>0m0.003s</td>
+              </tr>
+              <tr>
+                <td>10000</td>
+                <td>0m0.141s</td>
+                <td>0m0.110s</td>
+                <td>0m0.030s</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            For comparison, here are the same benchmarks using the external
+            <code>date</code> command:
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Iterations</th>
+                <th>real</th>
+                <th>user</th>
+                <th>sys</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>100</td>
+                <td>0m0.099s</td>
+                <td>0m0.039s</td>
+                <td>0m0.063s</td>
+              </tr>
+              <tr>
+                <td>1000</td>
+                <td>0m0.773s</td>
+                <td>0m0.314s</td>
+                <td>0m0.475s</td>
+              </tr>
+              <tr>
+                <td>10000</td>
+                <td>0m8.370s</td>
+                <td>0m3.175s</td>
+                <td>0m5.327s</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            As these results show, <code>printf</code> is consistently tens to
+            hundreds of times faster than <code>date</code>, particularly as the
+            number of iterations grows. The difference is not just in overall
+            runtime: the <code>user</code> and <code>sys</code> times reveal
+            why. While <code>printf</code> executes almost entirely in
+            <code>user</code> mode within the Bash process,
+            <code>date</code> spends a significant portion of its time in
+            <code>sys</code> mode, handling the overhead of creating and
+            managing new processes for each call.
+          </p>
+          <p>
+            This demonstrates that for high-frequency timestamp printing or
+            other repetitive tasks within Bash, builtins like
+            <code>printf</code> offer substantial performance advantages over
+            external commands like <code>date</code>.
+          </p>
+
+          <h2>Why date Still Matters</h2>
+          <p>
+            If <code>printf</code> is so much faster, why is
+            <code>date</code> still around and widely used? The first reason is
+            portability. The <code>%T</code> extension is specific to Bash and
+            does not exist in the POSIX specification for <code>printf</code>.
+            If you write a script that is meant to run under
+            <code>/bin/sh</code> on systems where Bash is not guaranteed, you
+            cannot rely on it.
+          </p>
+          <p>
+            For example, on <code>dash</code> (a lightweight POSIX shell),
+            <code>printf</code> simply fails:
+          </p>
+          <pre><code>$ dash -c 'printf "%(%F %T)T\\n" -1'
+dash: 1: printf: %T: invalid directive
+</code></pre>
+          <p>
+            The secode reason is compatibility within Bash itself. The usage of
+            <code>printf</code> paired with the <code>%T</code> format specifier
+            is a relatively recent addition to Bash, introduced in version 4.2.
+            Many existing scripts and systems still run on older versions of
+            Bash that do not support this feature. In such cases, using
+            <code>date</code> remains the only viable option for printing
+            formatted timestamps.
+          </p>
+          <p>
+            Another reason is features. <code>date</code> can do far more than
+            simply print the current timestamp. It can parse natural language
+            expressions like yesterday or next Monday, convert between time
+            zones, or apply complex arithmetic to dates.
+          </p>
+          <p>
+            Finally, there is the matter of familiarity. <code>date</code> has
+            been part of the Unix toolbox for decades, and most people reach for
+            it without thinking about alternatives.
+          </p>
+
+          <h2>The Bottom Line</h2>
+          <p>
+            The lesson here is simple: Bash builtins run in-process and avoid
+            the overhead of forking and executing new programs. External
+            commands like <code>date</code> require that overhead every time
+            they are called. If you are writing a script for Bash and care about
+            speed, prefer <code>printf</code> for printing timestamps. If you
+            need portability, complex date arithmetic, or simply the
+            long-established familiarity of <code>date</code>, then stick with
+            it. Both tools have their place, but now you know why one is so much
+            faster than the other.
+          </p>
+
+          <h2>References & Further Reading</h2>
+          <h3>Bash</h3>
+          <ul>
+            <li><code>man bash</code> - Bash Manual</li>
+            <li>
+              <code>man 3 printf</code> - <code>printf()</code> Library
+              Functions Manual
+            </li>
+          </ul>
+          <h3>GNU Coreutils</h3>
+          <ul>
+            <code>man date</code>
+            -
+            <code>date</code>
+            Command Manual
+          </ul>
+          <h3>System Calls</h3>
+          <ul>
+            <li>
+              <code>man 2 fork</code> - <code>fork()</code> System Call Manual
+            </li>
+            <li>
+              <code>man 2 execve</code> - <code>exec()</code> System Call Manual
+            </li>
+            <li>
+              <code>man 2 wait</code> - <code>wait()</code> System Call Manual
+            </li>
+          </ul>
+          <h3>Library Functions</h3>
+          <ul>
+            <li>
+              <code>man 3 strftime</code> - <code>strftime()</code> Library
+              Functions Manual
+            </li>
+          </ul>
+        </article>
+      </main>
+
+      <footer>
+        <p>
+          &copy; 2025
+          <a href="https://github.com/AntonVanAssche/">Anton Van Assche</a>
+        </p>
+        <div class="contact">
+          <a href="https://github.com/AntonVanAssche" target="_blank">GitHub</a>
+          <a href="https://gitlab.com/AntonVanAssche" target="_blank">GitLab</a>
+          <a
+            href="https://www.linkedin.com/in/anton-van-assche/"
+            target="_blank"
+            >LinkedIn</a
+          >
+          <a href="mailto:vanasscheanton@duck.com">Email</a>
+          <a
+            href="https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex"
+            target="_blank"
+            >GPG Key</a
+          >
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
