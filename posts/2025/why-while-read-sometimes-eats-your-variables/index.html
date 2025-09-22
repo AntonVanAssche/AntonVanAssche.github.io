@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Why while read Sometimes Eats Your Variables - Anton Van Assche
+    </title>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="icon" href="/assets/favicon.png" type="image/png" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="/">Home</a>
+        <a href="/about/">About</a>
+        <a href="/posts/" class="active">Posts</a>
+      </nav>
+
+      <main>
+        <article>
+          <h1>Why <code>while read</code> Sometimes Eats Your Variables</h1>
+          <p>
+            <em>by Anton Van Assche</em> -
+            <span class="reading-time" aria-label="Estimated reading time: 12"
+              >12 min read</span
+            >
+          </p>
+          <p>
+            If you have ever written a shell script that loops over lines of
+            input, you may have stumbled on a surprising behavior. Consider the
+            following code:
+          </p>
+          <pre><code>count=0
+echo -e "a\nb\nc" | while read line; do
+  ((count++))
+done
+echo "Count: $count"</code></pre>
+          <p>
+            You might expect it to print <code>Count: 3</code>. Instead, it
+            prints:
+          </p>
+          <pre><code>Count: 0</code></pre>
+          <p>
+            The loop clearly executed three times, so why did the variable never
+            change? The answer lies in how Bash implements pipelines and
+            subshells.
+          </p>
+
+          <h2>Pipelines and Subshells</h2>
+          <p>
+            A pipeline in Bash, like <code>producer | consumer</code>, is not a
+            single process. Bash must set up a pipe (a unidirectional data
+            channel in the kernel) and then run each command in the pipeline in
+            a separate process. That way, data flows between processes without
+            blocking the parent shell.
+          </p>
+          <p>You can picture it like this:</p>
+          <pre><code>Parent shell (bash)
+   |
+   |-- fork() -> producer (echo)
+   |        writes "a\nb\nc" to pipe
+   |
+   `-- fork() -> consumer (while read loop)
+            reads from pipe
+            increments $count (in child only)</code></pre>
+          <p>
+            Variables in Bash are scoped to the process. The <code>count</code>
+            you incremented lives in the subshell created for the consumer. When
+            the subshell exits, its memory is destroyed. The parent shell's
+            <code>count</code> was never touched, which is why the final
+            <code>echo</code> shows <code>0</code>.
+          </p>
+          <p>We can visualize what happens in memory:</p>
+          <pre><code>Parent Shell Memory
+-------------------
+count = 0
+ENV_VAR = "original"
+
+Pipeline forks -> Subshell (while loop)
+-------------------
+count = 0      <- incremented independently
+ENV_VAR = "original"
+
+After subshell exits:
+-------------------
+Parent shell memory unchanged:
+count = 0
+ENV_VAR = "original"</code></pre>
+          <p>
+            This combination shows both the process-level separation (PID view)
+            and the variable-level effect (memory view). It makes it much easier
+            to understand why your loop doesn't change the parent shell's
+            variables.
+          </p>
+
+          <h2>Why Bash Does This</h2>
+          <p>
+            You might wonder why Bash doesn't just run the last command of a
+            pipeline in the current shell. The reason is consistency. The POSIX
+            specification allows the shell to decide whether each part of a
+            pipeline runs in a subshell or not, but historically most shells
+            fork each stage to avoid tricky edge cases where builtins would
+            otherwise block the pipeline.
+          </p>
+          <blockquote>
+            "Each command in a multi-command pipeline, where pipes are created,
+            is executed in a subshell, which is a separate process."
+            <cite>The Bash Manual</cite>
+          </blockquote>
+          <p>
+            The side effect is that anything you do in that last stage - setting
+            variables, changing directories, or modifying shell options -
+            disappears when the subshell exits.
+          </p>
+          <p>Here is a simplified ASCII view of what happens:</p>
+          <pre><code>Without pipeline:
+bash (pid 1000)
+   |
+   `-- runs while-loop directly
+       updates $count in pid 1000
+
+With pipeline:
+bash (pid 1000)
+   |
+   |-- fork() -> pid 1001 (echo)
+   |
+   `-- fork() -> pid 1002 (while loop)
+                 updates $count in pid 1002
+                 exits, state lost</code></pre>
+
+          <h2>Proving the Subshell</h2>
+          <p>
+            We can actually visualize this behavior by printing the process ID
+            of each stage:
+          </p>
+          <pre><code>echo "Parent PID: $BASHPID"
+
+echo -e "a\nb\nc" | while read line; do
+    echo "Loop PID: $BASHPID"
+done</code></pre>
+          <p>
+            Here we use the <code>BASHPID</code> variable, which holds the PID
+            of the current Bash process. The output will look something like
+            this:
+          </p>
+          <pre><code>Parent PID: 1219125
+Loop PID: 1225380
+Loop PID: 1225380
+Loop PID: 1225380</code></pre>
+          <p>
+            Notice that the <code>Loop PID</code> is different from the
+            <code>Parent PID</code>, confirming that the loop runs in a separate
+            subshell process. Each iteration of the loop shows the same PID
+            because it is the same subshell instance handling all reads from the
+            pipe.
+          </p>
+          <p>
+            In the example above we used <code>$BASHPID</code> instead of the
+            older <code>$$</code>, this is due to the fact that
+            <code>$$</code> always shows the PID of the original shell (the
+            parent shell), not the current subshell. When we would used
+            <code>$$</code> the result would simply be four times
+            <code>1219125</code> which can be misleading.
+          </p>
+          <p>
+            Another way to see the subshell effect is to modify an environment,
+            e.g. changing a variable or changing directories, and observing that
+            the change does not persist after the loop.
+          </p>
+          <pre><code>count=0
+echo -e "a\nb\nc" | while read line; do
+    ((count++))
+done
+echo "Count: $count"        # prints 0, variable change lost
+
+echo "Initial directory: $(pwd)"
+echo -e "/tmp\n/home" | while read dir; do
+    cd "$dir"
+    echo "Inside loop: $(pwd)"
+done
+echo "After loop: $(pwd)"   # parent shell directory unchanged</code></pre>
+          <p>
+            When we execute this, we see that the <code>count</code> remains
+            <code>0</code>, and the directory after the loop is the same as
+            before, confirming that changes inside the loop do not affect the
+            parent shell.
+          </p>
+          <p>Resulting in output like:</p>
+          <pre><code>Count: 0
+Initial directory: /home/anton
+Inside loop: /tmp
+Inside loop: /home
+After loop: /home/anton</code></pre>
+          <p>
+            Both examples clearly demonstrate that the loop runs in a subshell,
+            and each subshell has its own separate memory and environment.
+          </p>
+
+          <h2>Using <code>{...}</code> vs. <code>(...)</code> Groups</h2>
+          <p>
+            Bash supports two types of command grouping: curly braces and
+            parentheses. Each has different implications for variable scope and
+            subshell behavior:
+          </p>
+          <ul>
+            <li>
+              Curly braces <code>{ …; }</code> will cause the commands inside
+              the grouping to run in the current shell. Any variable changes or
+              environment modifications will persist after the group completes.
+            </li>
+            <li>
+              Parentheses <code>( … )</code> will run the commands inside a
+              subshell. Variable changes and environment modifications will not
+              persist after the subshell exits.
+            </li>
+          </ul>
+          <p>
+            An important caveat when using curly braces inside a pipeline, is
+            that it will <strong>not</strong> prevent the whole pipeline from
+            running in a subshell. The entire pipeline will still run in a
+            subshell, the curly braces only take affect on how the commands are
+            handled inside that subshell.
+          </p>
+          <p>For example:</p>
+          <pre><code>count=0
+echo -e "a\nb\nc" | { while read line; do ((count++)); done; }
+echo "Count: $count"  # still prints 0, because the whole pipeline is in a subshell</code></pre>
+          <p>
+            Using parentheses inside a pipeline just nests a subshell within a
+            subshell:
+          </p>
+          <pre><code>count=0
+echo -e "a\nb\nc" | ( while read line; do ((count++)); done )
+echo "Count: $count"  # still prints 0, because the whole pipeline is in a subshell</code></pre>
+          <p>
+            This makes it clear that
+            <strong
+              >grouping alone does not overcome the subshell behavior of
+              pipelines</strong
+            >.
+          </p>
+
+          <h2>Workarounds</h2>
+          <p>
+            There are a few ways to avoid this behavior, depending on your Bash
+            version, coding style, and requirements.
+          </p>
+
+          <h3>Redirect input into the loop</h3>
+          <p>
+            Instead of piping into the loop, feed it input via process
+            substitution. This way the loop runs in the parent shell:
+          </p>
+          <pre><code>count=0
+while read line; do
+  ((count++))
+done < <(echo -e "a\nb\nc")
+
+echo "Count: $count"
+# -> Count: 3</code></pre>
+          <p>
+            Here, <code>&lt; &lt;(...)</code> creates a temporary file
+            descriptor that Bash connects directly to the loop, so no subshell
+            is needed for the <code>while</code>.
+          </p>
+
+          <h3>Rethink the design</h3>
+          <p>
+            Sometimes, you don't need to maintain state in a loop at all. For
+            example, if you only need to count lines, a utility like
+            <code>wc</code> can do it directly:
+          </p>
+          <pre><code>count=$(echo -e "a\nb\nc" | wc -l)
+echo "Count: $count"
+# -> Count: 3</code></pre>
+          <p>
+            Another modern approach (since Bash 4.0) is to use
+            <code>mapfile</code> (or <code>readarray</code>) to read all lines
+            into an array, which runs in the current shell and avoids subshell
+            issues:
+          </p>
+          <pre><code>mapfile -t lines < <(echo -e "a\nb\nc")
+count=${#lines[@]}
+echo "Count: $count"
+# -> Count: 3</code></pre>
+          <p>
+            Both <code>wc -l</code> and <code>mapfile</code> avoid the need for
+            a subshell entirely. They are often faster and express the intent
+            more clearly.
+          </p>
+
+          <h3>Use Bash's <code>lastpipe</code> option</h3>
+          <p>
+            Since Bash 4.2, you can enable <code>lastpipe</code>, which tells
+            Bash to run the last command in a pipeline in the current shell
+            rather than a subshell. This only works in non-interactive shells,
+            not in your interactive terminal.
+          </p>
+          <pre><code>shopt -s lastpipe
+
+count=0
+echo -e "a\nb\nc" | while read line; do
+  ((count++))
+done
+
+echo "Count: $count"
+# -> Count: 3</code></pre>
+          <p>
+            With <code>lastpipe</code> enabled, Bash executes the loop directly
+            in the parent process. This is closer to what many people expect,
+            but it is not enabled by default because it can subtly break
+            portability.
+          </p>
+          <p>
+            While it looks convenient, be cautious about using it, it may
+            introduce hard to debug bugs due to a variable change where you
+            least expect it. Most times a better redesign or writing style will
+            lead to more robust and maintainable code. As some parts of your
+            script might rely on the traditional behavior of pipelines creating
+            subshells.
+          </p>
+
+          <h2>The Bottom Line</h2>
+          <p>
+            Pipelines in Bash fork processes, and a <code>while read</code> loop
+            fed by a pipeline runs in a subshell. Any variables modified inside
+            that loop are lost once the subshell exits. To preserve state, you
+            can redirect input instead of piping, enable
+            <code>lastpipe</code> in modern Bash, or restructure your code to
+            avoid the issue entirely.
+          </p>
+
+          <p>
+            Once you understand that every pipeline stage is its own process,
+            the mystery of the disappearing variable becomes much less magical -
+            and much easier to avoid in your scripts.
+          </p>
+
+          <h2>References & Further Reading</h2>
+          <ul>
+            <li><code>man bash</code> - Bash Manual</li>
+            <li>
+              <code>man 2 fork</code> - <code>fork()</code> System Call Manual
+            </li>
+            <li>
+              <code>man 2 pipe</code> - <code>pipe()</code> System Call Manual
+            </li>
+            <li>
+              <code>man 2 wait</code> - <code>wait()</code> System Call Manual
+            </li>
+            <li><code>help shopt</code> - Bash shell options (see lastpipe)</li>
+          </ul>
+        </article>
+      </main>
+
+      <footer>
+        <p>
+          &copy; 2025
+          <a href="https://github.com/AntonVanAssche/">Anton Van Assche</a>
+        </p>
+        <div class="contact">
+          <a href="https://github.com/AntonVanAssche" target="_blank">GitHub</a>
+          <a href="https://gitlab.com/AntonVanAssche" target="_blank">GitLab</a>
+          <a
+            href="https://www.linkedin.com/in/anton-van-assche/"
+            target="_blank"
+            >LinkedIn</a
+          >
+          <a href="mailto:vanasscheanton@duck.com">Email</a>
+          <a
+            href="https://keyserver.ubuntu.com/pks/lookup?search=0x3ff8016d27683e3e&op=vindex"
+            target="_blank"
+            >GPG Key</a
+          >
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
